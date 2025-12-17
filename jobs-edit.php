@@ -25,7 +25,7 @@ try {
     $job_id = intval(base64_decode($_GET['job_id']));
     $query_edit = "SELECT ujr.*, tp.product_id, tp.product_name, tp.product_quantity, tp.product_price, tp.serial_no, tp.product_gst, tp.product_total, tp.product_total_amount
         FROM user_job_request ujr
-        INNER JOIN tbl_product tp ON ujr.job_id = tp.job_id
+        LEFT JOIN tbl_product tp ON ujr.job_id = tp.job_id
         WHERE ujr.job_id = ?";
     $stmt_edit = $conn->prepare($query_edit);
     $stmt_edit->bind_param("i", $job_id);
