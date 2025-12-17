@@ -9,40 +9,45 @@ if (!isset($_SESSION['user_name']) && !isset($_SESSION['admin_id'])) {
 
 
 
+
 $query_jobs = "
     SELECT 
-        user_job_request.job_id,
-        user_job_request.devel_code,
-        user_job_request.order_confirm_date,
-        user_job_request.order_taken_by,
-        user_job_request.job_name,
-        user_job_request.name,
-        user_job_request.name1,
-        user_job_request.email,
-        user_job_request.phone_no,
-        user_job_request.po_gst,
-        user_job_request.amount,
-        user_job_request.advance,
-        user_job_request.balance,
-        user_job_request.po_payment,
-        user_job_request.po_no,
-        user_job_request.uploaded_file,
-        user_job_request.po_file,
-        user_job_request.created_date,
-        user_job_request.concerned_engineer,
-        user_job_request.remark,
-        GROUP_CONCAT(DISTINCT user_job_request.job_id) AS job_ids,
-        JSON_ARRAYAGG(
-            JSON_OBJECT(
-                'job_id', user_job_request.job_id,
-                'product_name', tbl_product.product_name,
-                'product_quantity', tbl_product.product_quantity,
-                'concern_engineers', tbl_product.concern_engineers
-            )
-        ) AS job_details
-    FROM user_job_request 
-    INNER JOIN tbl_product ON tbl_product.job_id = user_job_request.job_id
-    GROUP BY user_job_request.job_id
+    ujr.job_id,
+    ujr.devel_code,
+    ujr.order_confirm_date,
+    ujr.order_taken_by,
+    ujr.job_name,
+    ujr.name,
+    ujr.name1,
+    ujr.email,
+    ujr.phone_no,
+    ujr.po_gst,
+    ujr.amount,
+    ujr.advance,
+    ujr.balance,
+    ujr.po_payment,
+    ujr.po_no,
+    ujr.uploaded_file,
+    ujr.po_file,
+    ujr.created_date,
+    ujr.concerned_engineer,
+    ujr.remark,
+
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'job_id', ujr.job_id,
+            'product_name', tbl_product.product_name,
+            'product_quantity', tbl_product.product_quantity,
+            'concern_engineers', tbl_product.concern_engineers
+        )
+    ) AS job_details
+
+FROM user_job_request ujr
+LEFT JOIN tbl_product 
+    ON tbl_product.job_id = ujr.job_id
+
+GROUP BY ujr.job_id;
+
 ";
 
 $result_jobs = mysqli_query($conn, $query_jobs);
